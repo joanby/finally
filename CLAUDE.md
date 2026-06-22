@@ -1,7 +1,7 @@
-# FinAlly Project - the Finance Ally
+# Proyecto FinAlly - El Aliado Financiero
 
-All project documentation is in the `planning` directory.
+Toda la documentación del proyecto se encuentra en el directorio `planning`.
 
-The key document is PLAN.md included in full below; the market data component has been completed and is summarized in the file `planning/MARKET_DATA_SUMMARY.md` with more details in the `planning/archive` folder. Consult these docs only when required. The remainder of the platform is still to be developed.
+El documento clave es PLAN.md, que se incluye completo a continuación; el componente de datos de mercado ya está terminado y se resume en el archivo `planning/MARKET_DATA_SUMMARY.md`, con más detalles en la carpeta `planning/archive`. Consulte esta documentación solo cuando sea necesario. El resto de la plataforma aún está en desarrollo.
 
 @planning/PLAN.md
