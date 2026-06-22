@@ -1,51 +1,51 @@
 # FinAlly — AI Trading Workstation
 
-## Project Specification
+## Especificación del Proyecto
 
-## 1. Vision
+## 1. Visión
 
-FinAlly (Finance Ally) is a visually stunning AI-powered trading workstation that streams live market data, lets users trade a simulated portfolio, and integrates an LLM chat assistant that can analyze positions and execute trades on the user's behalf. It looks and feels like a modern Bloomberg terminal with an AI copilot.
+FinAlly (Finance Ally) es una estación de trabajo de trading impulsada por IA, visualmente espectacular, que transmite datos de mercado en tiempo real, permite a los usuarios operar con una cartera simulada e integra un asistente de chat con LLM capaz de analizar posiciones y ejecutar operaciones en nombre del usuario. Tiene el aspecto y la sensación de una terminal Bloomberg moderna con un copiloto de IA.
 
-This is the capstone project for an agentic AI coding course. It is built entirely by Coding Agents demonstrating how orchestrated AI agents can produce a production-quality full-stack application. Agents interact through files in `planning/`.
+Este es el proyecto final de un curso de programación con IA agéntica. Está construido íntegramente por Agentes de Programación, demostrando cómo unos agentes de IA orquestados pueden producir una aplicación full-stack de calidad de producción. Los agentes interactúan a través de archivos en `planning/`.
 
-## 2. User Experience
+## 2. Experiencia de Usuario
 
-### First Launch
+### Primer Lanzamiento
 
-The user runs a single Docker command (or a provided start script). A browser opens to `http://localhost:8000`. No login, no signup. They immediately see:
+El usuario ejecuta un único comando Docker (o un script de inicio proporcionado). Se abre un navegador en `http://localhost:8000`. Sin inicio de sesión, sin registro. Inmediatamente ve:
 
-- A watchlist of 10 default tickers with live-updating prices in a grid
-- $10,000 in virtual cash
-- A dark, data-rich trading terminal aesthetic
-- An AI chat panel ready to assist
+- Una watchlist de 10 tickers predeterminados con precios actualizándose en vivo en una cuadrícula
+- $10,000 en efectivo virtual
+- Una estética de terminal de trading oscura y rica en datos
+- Un panel de chat de IA listo para ayudar
 
-### What the User Can Do
+### Qué Puede Hacer el Usuario
 
-- **Watch prices stream** — prices flash green (uptick) or red (downtick) with subtle CSS animations that fade
-- **View sparkline mini-charts** — price action beside each ticker in the watchlist, accumulated on the frontend from the SSE stream since page load (sparklines fill in progressively)
-- **Click a ticker** to see a larger detailed chart in the main chart area
-- **Buy and sell shares** — market orders only, instant fill at current price, no fees, no confirmation dialog
-- **Monitor their portfolio** — a heatmap (treemap) showing positions sized by weight and colored by P&L, plus a P&L chart tracking total portfolio value over time
-- **View a positions table** — ticker, quantity, average cost, current price, unrealized P&L, % change
-- **Chat with the AI assistant** — ask about their portfolio, get analysis, and have the AI execute trades and manage the watchlist through natural language
-- **Manage the watchlist** — add/remove tickers manually or via the AI chat
+- **Ver el flujo de precios en directo** — los precios destellan en verde (subida) o rojo (bajada) con sutiles animaciones CSS que se desvanecen
+- **Ver mini-gráficos de tipo sparkline** — la evolución del precio junto a cada ticker en la watchlist, acumulada en el frontend a partir del stream SSE desde la carga de la página (los sparklines se completan progresivamente)
+- **Hacer clic en un ticker** para ver un gráfico más grande y detallado en el área principal de gráficos
+- **Comprar y vender acciones** — solo órdenes de mercado, ejecución instantánea al precio actual, sin comisiones, sin diálogo de confirmación
+- **Monitorizar su cartera** — un mapa de calor (treemap) que muestra las posiciones dimensionadas por peso y coloreadas por P&L, además de un gráfico de P&L que sigue el valor total de la cartera a lo largo del tiempo
+- **Ver una tabla de posiciones** — ticker, cantidad, coste medio, precio actual, P&L no realizado, % de cambio
+- **Chatear con el asistente de IA** — preguntar sobre su cartera, obtener análisis y hacer que la IA ejecute operaciones y gestione la watchlist mediante lenguaje natural
+- **Gestionar la watchlist** — añadir/eliminar tickers manualmente o a través del chat de IA
 
-### Visual Design
+### Diseño Visual
 
-- **Dark theme**: backgrounds around `#0d1117` or `#1a1a2e`, muted gray borders, no pure black
-- **Price flash animations**: brief green/red background highlight on price change, fading over ~500ms via CSS transitions
-- **Connection status indicator**: a small colored dot (green = connected, yellow = reconnecting, red = disconnected) visible in the header
-- **Professional, data-dense layout**: inspired by Bloomberg/trading terminals — every pixel earns its place
-- **Responsive but desktop-first**: optimized for wide screens, functional on tablet
+- **Tema oscuro**: fondos en torno a `#0d1117` o `#1a1a2e`, bordes grises apagados, sin negro puro
+- **Animaciones de destello de precio**: breve resalte de fondo verde/rojo al cambiar el precio, desapareciendo en ~500ms mediante transiciones CSS
+- **Indicador de estado de conexión**: un pequeño punto de color (verde = conectado, amarillo = reconectando, rojo = desconectado) visible en el encabezado
+- **Diseño profesional y denso en datos**: inspirado en terminales Bloomberg/de trading — cada píxel cumple una función
+- **Adaptable pero pensado primero para escritorio**: optimizado para pantallas anchas, funcional en tablet
 
-### Color Scheme
-- Accent Yellow: `#ecad0a`
-- Blue Primary: `#209dd7`
-- Purple Secondary: `#753991` (submit buttons)
+### Esquema de Colores
+- Amarillo de Acento: `#ecad0a`
+- Azul Primario: `#209dd7`
+- Púrpura Secundario: `#753991` (botones de envío)
 
-## 3. Architecture Overview
+## 3. Visión General de la Arquitectura
 
-### Single Container, Single Port
+### Contenedor Único, Puerto Único
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -62,245 +62,245 @@ The user runs a single Docker command (or a provided start script). A browser op
 └─────────────────────────────────────────────────┘
 ```
 
-- **Frontend**: Next.js with TypeScript, built as a static export (`output: 'export'`), served by FastAPI as static files
-- **Backend**: FastAPI (Python), managed as a `uv` project
-- **Database**: SQLite, single file at `db/finally.db`, volume-mounted for persistence
-- **Real-time data**: Server-Sent Events (SSE) — simpler than WebSockets, one-way server→client push, works everywhere
-- **AI integration**: LiteLLM → OpenRouter (Cerebras for fast inference), with structured outputs for trade execution
-- **Market data**: Environment-variable driven — simulator by default, real data via Massive API if key provided
+- **Frontend**: Next.js con TypeScript, compilado como exportación estática (`output: 'export'`), servido por FastAPI como archivos estáticos
+- **Backend**: FastAPI (Python), gestionado como un proyecto `uv`
+- **Base de datos**: SQLite, un único archivo en `db/finally.db`, montado como volumen para persistencia
+- **Datos en tiempo real**: Server-Sent Events (SSE) — más sencillo que WebSockets, envío unidireccional servidor→cliente, funciona en cualquier entorno
+- **Integración de IA**: LiteLLM → OpenRouter (Cerebras para inferencia rápida), con salidas estructuradas para la ejecución de operaciones
+- **Datos de mercado**: controlados por variables de entorno — simulador por defecto, datos reales mediante la API de Massive si se proporciona una clave
 
-### Why These Choices
+### Por Qué Estas Decisiones
 
-| Decision | Rationale |
+| Decisión | Justificación |
 |---|---|
-| SSE over WebSockets | One-way push is all we need; simpler, no bidirectional complexity, universal browser support |
-| Static Next.js export | Single origin, no CORS issues, one port, one container, simple deployment |
-| SQLite over Postgres | No auth = no multi-user = no need for a database server; self-contained, zero config |
-| Single Docker container | Students run one command; no docker-compose for production, no service orchestration |
-| uv for Python | Fast, modern Python project management; reproducible lockfile; what students should learn |
-| Market orders only | Eliminates order book, limit order logic, partial fills — dramatically simpler portfolio math |
+| SSE en lugar de WebSockets | Solo necesitamos envío unidireccional; más simple, sin complejidad bidireccional, soporte universal en navegadores |
+| Exportación estática de Next.js | Mismo origen, sin problemas de CORS, un solo puerto, un solo contenedor, despliegue simple |
+| SQLite en lugar de Postgres | Sin autenticación = sin multiusuario = sin necesidad de un servidor de base de datos; autocontenido, configuración cero |
+| Contenedor Docker único | Los estudiantes ejecutan un solo comando; sin docker-compose en producción, sin orquestación de servicios |
+| uv para Python | Gestión de proyectos Python rápida y moderna; lockfile reproducible; lo que los estudiantes deben aprender |
+| Solo órdenes de mercado | Elimina el libro de órdenes, la lógica de órdenes limitadas y las ejecuciones parciales — matemática de cartera drásticamente más simple |
 
 ---
 
-## 4. Directory Structure
+## 4. Estructura de Directorios
 
 ```
 finally/
-├── frontend/                 # Next.js TypeScript project (static export)
-├── backend/                  # FastAPI uv project (Python)
-│   └── db/                   # Schema definitions, seed data, migration logic
-├── planning/                 # Project-wide documentation for agents
-│   ├── PLAN.md               # This document
-│   └── ...                   # Additional agent reference docs
+├── frontend/                 # Proyecto Next.js TypeScript (exportación estática)
+├── backend/                  # Proyecto FastAPI uv (Python)
+│   └── db/                   # Definiciones de esquema, datos semilla, lógica de migración
+├── planning/                 # Documentación del proyecto para los agentes
+│   ├── PLAN.md               # Este documento
+│   └── ...                   # Documentos de referencia adicionales para agentes
 ├── scripts/
-│   ├── start_mac.sh          # Launch Docker container (macOS/Linux)
-│   ├── stop_mac.sh           # Stop Docker container (macOS/Linux)
-│   ├── start_windows.ps1     # Launch Docker container (Windows PowerShell)
-│   └── stop_windows.ps1      # Stop Docker container (Windows PowerShell)
-├── test/                     # Playwright E2E tests + docker-compose.test.yml
-├── db/                       # Volume mount target (SQLite file lives here at runtime)
-│   └── .gitkeep              # Directory exists in repo; finally.db is gitignored
-├── Dockerfile                # Multi-stage build (Node → Python)
-├── docker-compose.yml        # Optional convenience wrapper
-├── .env                      # Environment variables (gitignored, .env.example committed)
+│   ├── start_mac.sh          # Inicia el contenedor Docker (macOS/Linux)
+│   ├── stop_mac.sh           # Detiene el contenedor Docker (macOS/Linux)
+│   ├── start_windows.ps1     # Inicia el contenedor Docker (Windows PowerShell)
+│   └── stop_windows.ps1      # Detiene el contenedor Docker (Windows PowerShell)
+├── test/                     # Tests E2E con Playwright + docker-compose.test.yml
+├── db/                       # Punto de montaje del volumen (el archivo SQLite vive aquí en tiempo de ejecución)
+│   └── .gitkeep              # El directorio existe en el repo; finally.db está en .gitignore
+├── Dockerfile                # Build multi-etapa (Node → Python)
+├── docker-compose.yml        # Wrapper opcional de conveniencia
+├── .env                      # Variables de entorno (en .gitignore, se versiona .env.example)
 └── .gitignore
 ```
 
-### Key Boundaries
+### Límites Clave
 
-- **`frontend/`** is a self-contained Next.js project. It knows nothing about Python. It talks to the backend via `/api/*` endpoints and `/api/stream/*` SSE endpoints. Internal structure is up to the Frontend Engineer agent.
-- **`backend/`** is a self-contained uv project with its own `pyproject.toml`. It owns all server logic including database initialization, schema, seed data, API routes, SSE streaming, market data, and LLM integration. Internal structure is up to the Backend/Market Data agents.
-- **`backend/db/`** contains schema SQL definitions and seed logic. The backend lazily initializes the database on first request — creating tables and seeding default data if the SQLite file doesn't exist or is empty.
-- **`db/`** at the top level is the runtime volume mount point. The SQLite file (`db/finally.db`) is created here by the backend and persists across container restarts via Docker volume.
-- **`planning/`** contains project-wide documentation, including this plan. All agents reference files here as the shared contract.
-- **`test/`** contains Playwright E2E tests and supporting infrastructure (e.g., `docker-compose.test.yml`). Unit tests live within `frontend/` and `backend/` respectively, following each framework's conventions.
-- **`scripts/`** contains start/stop scripts that wrap Docker commands.
+- **`frontend/`** es un proyecto Next.js autocontenido. No sabe nada de Python. Se comunica con el backend a través de los endpoints `/api/*` y los endpoints SSE `/api/stream/*`. La estructura interna queda a criterio del agente Ingeniero de Frontend.
+- **`backend/`** es un proyecto uv autocontenido con su propio `pyproject.toml`. Es responsable de toda la lógica del servidor, incluyendo la inicialización de la base de datos, el esquema, los datos semilla, las rutas de la API, el streaming SSE, los datos de mercado y la integración con el LLM. La estructura interna queda a criterio de los agentes de Backend/Datos de Mercado.
+- **`backend/db/`** contiene las definiciones SQL del esquema y la lógica de datos semilla. El backend inicializa la base de datos de forma diferida (lazy) en la primera solicitud — creando las tablas y poblando los datos predeterminados si el archivo SQLite no existe o está vacío.
+- **`db/`** en el nivel superior es el punto de montaje del volumen en tiempo de ejecución. El archivo SQLite (`db/finally.db`) es creado aquí por el backend y persiste entre reinicios del contenedor gracias al volumen Docker.
+- **`planning/`** contiene la documentación de todo el proyecto, incluido este plan. Todos los agentes usan los archivos de aquí como contrato compartido.
+- **`test/`** contiene los tests E2E con Playwright e infraestructura de soporte (por ejemplo, `docker-compose.test.yml`). Los tests unitarios viven dentro de `frontend/` y `backend/` respectivamente, siguiendo las convenciones de cada framework.
+- **`scripts/`** contiene los scripts de inicio/parada que envuelven comandos Docker.
 
 ---
 
-## 5. Environment Variables
+## 5. Variables de Entorno
 
 ```bash
-# Required: OpenRouter API key for LLM chat functionality
+# Obligatoria: clave de API de OpenRouter para la funcionalidad de chat con LLM
 OPENROUTER_API_KEY=your-openrouter-api-key-here
 
-# Optional: Massive (Polygon.io) API key for real market data
-# If not set, the built-in market simulator is used (recommended for most users)
+# Opcional: clave de API de Massive (Polygon.io) para datos de mercado reales
+# Si no se establece, se usa el simulador de mercado integrado (recomendado para la mayoría de usuarios)
 MASSIVE_API_KEY=
 
-# Optional: Set to "true" for deterministic mock LLM responses (testing)
+# Opcional: establecer en "true" para respuestas de LLM simuladas y deterministas (pruebas)
 LLM_MOCK=false
 ```
 
-### Behavior
+### Comportamiento
 
-- If `MASSIVE_API_KEY` is set and non-empty → backend uses Massive REST API for market data
-- If `MASSIVE_API_KEY` is absent or empty → backend uses the built-in market simulator
-- If `LLM_MOCK=true` → backend returns deterministic mock LLM responses (for E2E tests)
-- The backend reads `.env` from the project root (mounted into the container or read via docker `--env-file`)
+- Si `MASSIVE_API_KEY` está establecida y no está vacía → el backend usa la API REST de Massive para los datos de mercado
+- Si `MASSIVE_API_KEY` está ausente o vacía → el backend usa el simulador de mercado integrado
+- Si `LLM_MOCK=true` → el backend devuelve respuestas de LLM simuladas y deterministas (para tests E2E)
+- El backend lee el `.env` desde la raíz del proyecto (montado en el contenedor o leído mediante `--env-file` de docker)
 
 ---
 
-## 6. Market Data
+## 6. Datos de Mercado
 
-### Two Implementations, One Interface
+### Dos Implementaciones, Una Interfaz
 
-Both the simulator and the Massive client implement the same abstract interface. The backend selects which to use based on the environment variable. All downstream code (SSE streaming, price cache, frontend) is agnostic to the source.
+Tanto el simulador como el cliente de Massive implementan la misma interfaz abstracta. El backend selecciona cuál usar en función de la variable de entorno. Todo el código posterior (streaming SSE, caché de precios, frontend) es agnóstico respecto a la fuente.
 
-### Simulator (Default)
+### Simulador (Predeterminado)
 
-- Generates prices using geometric Brownian motion (GBM) with configurable drift and volatility per ticker
-- Updates at ~500ms intervals
-- Correlated moves across tickers (e.g., tech stocks move together)
-- Occasional random "events" — sudden 2-5% moves on a ticker for drama
-- Starts from realistic seed prices (e.g., AAPL ~$190, GOOGL ~$175, etc.)
-- Runs as an in-process background task — no external dependencies
+- Genera precios utilizando movimiento browniano geométrico (GBM) con deriva (drift) y volatilidad configurables por ticker
+- Se actualiza en intervalos de ~500ms
+- Movimientos correlacionados entre tickers (por ejemplo, las acciones tecnológicas se mueven juntas)
+- "Eventos" aleatorios ocasionales — movimientos súbitos del 2-5% en un ticker para dar dramatismo
+- Comienza desde precios semilla realistas (por ejemplo, AAPL ~$190, GOOGL ~$175, etc.)
+- Se ejecuta como una tarea en segundo plano dentro del propio proceso — sin dependencias externas
 
-### Massive API (Optional)
+### API de Massive (Opcional)
 
-- REST API polling (not WebSocket) — simpler, works on all tiers
-- Polls for the union of all watched tickers on a configurable interval
-- Free tier (5 calls/min): poll every 15 seconds
-- Paid tiers: poll every 2-15 seconds depending on tier
-- Parses REST response into the same format as the simulator
+- Sondeo (polling) mediante API REST (no WebSocket) — más simple, funciona en todos los niveles de suscripción
+- Sondea la unión de todos los tickers vigilados en un intervalo configurable
+- Nivel gratuito (5 llamadas/min): sondeo cada 15 segundos
+- Niveles de pago: sondeo cada 2-15 segundos según el nivel
+- Parsea la respuesta REST al mismo formato que el simulador
 
-### Shared Price Cache
+### Caché de Precios Compartida
 
-- A single background task (simulator or Massive poller) writes to an in-memory price cache
-- The cache holds the latest price, previous price, and timestamp for each ticker
-- SSE streams read from this cache and push updates to connected clients
-- This architecture supports future multi-user scenarios without changes to the data layer
+- Una única tarea en segundo plano (el simulador o el poller de Massive) escribe en una caché de precios en memoria
+- La caché guarda el último precio, el precio anterior y la marca de tiempo de cada ticker
+- Los streams SSE leen de esta caché y envían actualizaciones a los clientes conectados
+- Esta arquitectura permite futuros escenarios multiusuario sin cambios en la capa de datos
 
-### SSE Streaming
+### Streaming SSE
 
 - Endpoint: `GET /api/stream/prices`
-- Long-lived SSE connection; client uses native `EventSource` API
-- Server pushes price updates for all tickers known to the system at a regular cadence (~500ms) — in the single-user model this is equivalent to the user's watchlist
-- Each SSE event contains ticker, price, previous price, timestamp, and change direction
-- Client handles reconnection automatically (EventSource has built-in retry)
+- Conexión SSE de larga duración; el cliente usa la API nativa `EventSource`
+- El servidor envía actualizaciones de precio para todos los tickers conocidos por el sistema a un ritmo regular (~500ms) — en el modelo de usuario único esto equivale a la watchlist del usuario
+- Cada evento SSE contiene ticker, precio, precio anterior, marca de tiempo y dirección del cambio
+- El cliente gestiona la reconexión automáticamente (EventSource tiene reintento incorporado)
 
 ---
 
-## 7. Database
+## 7. Base de Datos
 
-### SQLite with Lazy Initialization
+### SQLite con Inicialización Diferida (Lazy)
 
-The backend checks for the SQLite database on startup (or first request). If the file doesn't exist or tables are missing, it creates the schema and seeds default data. This means:
+El backend comprueba la existencia de la base de datos SQLite al arrancar (o en la primera solicitud). Si el archivo no existe o faltan tablas, crea el esquema y puebla los datos predeterminados. Esto significa:
 
-- No separate migration step
-- No manual database setup
-- Fresh Docker volumes start with a clean, seeded database automatically
+- Sin paso de migración independiente
+- Sin configuración manual de la base de datos
+- Los volúmenes Docker nuevos arrancan automáticamente con una base de datos limpia y poblada
 
-### Schema
+### Esquema
 
-All tables include a `user_id` column defaulting to `"default"`. This is hardcoded for now (single-user) but enables future multi-user support without schema migration.
+Todas las tablas incluyen una columna `user_id` con valor predeterminado `"default"`. Esto está fijado por ahora (usuario único) pero permite un futuro soporte multiusuario sin migración de esquema.
 
-**users_profile** — User state (cash balance)
-- `id` TEXT PRIMARY KEY (default: `"default"`)
-- `cash_balance` REAL (default: `10000.0`)
-- `created_at` TEXT (ISO timestamp)
+**users_profile** — Estado del usuario (saldo de efectivo)
+- `id` TEXT PRIMARY KEY (predeterminado: `"default"`)
+- `cash_balance` REAL (predeterminado: `10000.0`)
+- `created_at` TEXT (marca de tiempo ISO)
 
-**watchlist** — Tickers the user is watching
+**watchlist** — Tickers que el usuario está vigilando
 - `id` TEXT PRIMARY KEY (UUID)
-- `user_id` TEXT (default: `"default"`)
+- `user_id` TEXT (predeterminado: `"default"`)
 - `ticker` TEXT
-- `added_at` TEXT (ISO timestamp)
-- UNIQUE constraint on `(user_id, ticker)`
+- `added_at` TEXT (marca de tiempo ISO)
+- Restricción UNIQUE en `(user_id, ticker)`
 
-**positions** — Current holdings (one row per ticker per user)
+**positions** — Posiciones actuales (una fila por ticker por usuario)
 - `id` TEXT PRIMARY KEY (UUID)
-- `user_id` TEXT (default: `"default"`)
+- `user_id` TEXT (predeterminado: `"default"`)
 - `ticker` TEXT
-- `quantity` REAL (fractional shares supported)
+- `quantity` REAL (se admiten acciones fraccionarias)
 - `avg_cost` REAL
-- `updated_at` TEXT (ISO timestamp)
-- UNIQUE constraint on `(user_id, ticker)`
+- `updated_at` TEXT (marca de tiempo ISO)
+- Restricción UNIQUE en `(user_id, ticker)`
 
-**trades** — Trade history (append-only log)
+**trades** — Historial de operaciones (registro de solo adición)
 - `id` TEXT PRIMARY KEY (UUID)
-- `user_id` TEXT (default: `"default"`)
+- `user_id` TEXT (predeterminado: `"default"`)
 - `ticker` TEXT
-- `side` TEXT (`"buy"` or `"sell"`)
-- `quantity` REAL (fractional shares supported)
+- `side` TEXT (`"buy"` o `"sell"`)
+- `quantity` REAL (se admiten acciones fraccionarias)
 - `price` REAL
-- `executed_at` TEXT (ISO timestamp)
+- `executed_at` TEXT (marca de tiempo ISO)
 
-**portfolio_snapshots** — Portfolio value over time (for P&L chart). Recorded every 30 seconds by a background task, and immediately after each trade execution.
+**portfolio_snapshots** — Valor de la cartera a lo largo del tiempo (para el gráfico de P&L). Se registra cada 30 segundos mediante una tarea en segundo plano, e inmediatamente después de cada ejecución de operación.
 - `id` TEXT PRIMARY KEY (UUID)
-- `user_id` TEXT (default: `"default"`)
+- `user_id` TEXT (predeterminado: `"default"`)
 - `total_value` REAL
-- `recorded_at` TEXT (ISO timestamp)
+- `recorded_at` TEXT (marca de tiempo ISO)
 
-**chat_messages** — Conversation history with LLM
+**chat_messages** — Historial de conversación con el LLM
 - `id` TEXT PRIMARY KEY (UUID)
-- `user_id` TEXT (default: `"default"`)
-- `role` TEXT (`"user"` or `"assistant"`)
+- `user_id` TEXT (predeterminado: `"default"`)
+- `role` TEXT (`"user"` o `"assistant"`)
 - `content` TEXT
-- `actions` TEXT (JSON — trades executed, watchlist changes made; null for user messages)
-- `created_at` TEXT (ISO timestamp)
+- `actions` TEXT (JSON — operaciones ejecutadas, cambios realizados en la watchlist; null para mensajes del usuario)
+- `created_at` TEXT (marca de tiempo ISO)
 
-### Default Seed Data
+### Datos Semilla Predeterminados
 
-- One user profile: `id="default"`, `cash_balance=10000.0`
-- Ten watchlist entries: AAPL, GOOGL, MSFT, AMZN, TSLA, NVDA, META, JPM, V, NFLX
+- Un perfil de usuario: `id="default"`, `cash_balance=10000.0`
+- Diez entradas en la watchlist: AAPL, GOOGL, MSFT, AMZN, TSLA, NVDA, META, JPM, V, NFLX
 
 ---
 
-## 8. API Endpoints
+## 8. Endpoints de la API
 
-### Market Data
-| Method | Path | Description |
+### Datos de Mercado
+| Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/api/stream/prices` | SSE stream of live price updates |
+| GET | `/api/stream/prices` | Stream SSE de actualizaciones de precios en vivo |
 
-### Portfolio
-| Method | Path | Description |
+### Cartera
+| Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/api/portfolio` | Current positions, cash balance, total value, unrealized P&L |
-| POST | `/api/portfolio/trade` | Execute a trade: `{ticker, quantity, side}` |
-| GET | `/api/portfolio/history` | Portfolio value snapshots over time (for P&L chart) |
+| GET | `/api/portfolio` | Posiciones actuales, saldo de efectivo, valor total, P&L no realizado |
+| POST | `/api/portfolio/trade` | Ejecuta una operación: `{ticker, quantity, side}` |
+| GET | `/api/portfolio/history` | Capturas del valor de la cartera a lo largo del tiempo (para el gráfico de P&L) |
 
 ### Watchlist
-| Method | Path | Description |
+| Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/api/watchlist` | Current watchlist tickers with latest prices |
-| POST | `/api/watchlist` | Add a ticker: `{ticker}` |
-| DELETE | `/api/watchlist/{ticker}` | Remove a ticker |
+| GET | `/api/watchlist` | Tickers actuales de la watchlist con sus últimos precios |
+| POST | `/api/watchlist` | Añade un ticker: `{ticker}` |
+| DELETE | `/api/watchlist/{ticker}` | Elimina un ticker |
 
 ### Chat
-| Method | Path | Description |
+| Método | Ruta | Descripción |
 |--------|------|-------------|
-| POST | `/api/chat` | Send a message, receive complete JSON response (message + executed actions) |
+| POST | `/api/chat` | Envía un mensaje, recibe una respuesta JSON completa (mensaje + acciones ejecutadas) |
 
-### System
-| Method | Path | Description |
+### Sistema
+| Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/api/health` | Health check (for Docker/deployment) |
+| GET | `/api/health` | Comprobación de estado (para Docker/despliegue) |
 
 ---
 
-## 9. LLM Integration
+## 9. Integración con el LLM
 
-When writing code to make calls to LLMs, use cerebras-inference skill to use LiteLLM via OpenRouter to the `openrouter/openai/gpt-oss-120b` model with Cerebras as the inference provider. Structured Outputs should be used to interpret the results.
+Al escribir código que realice llamadas a LLMs, usa la skill cerebras-inference para utilizar LiteLLM a través de OpenRouter hacia el modelo `openrouter/openai/gpt-oss-120b`, con Cerebras como proveedor de inferencia. Se deben usar Salidas Estructuradas (Structured Outputs) para interpretar los resultados.
 
-There is an OPENROUTER_API_KEY in the .env file in the project root.
+Existe una OPENROUTER_API_KEY en el archivo .env en la raíz del proyecto.
 
-### How It Works
+### Cómo Funciona
 
-When the user sends a chat message, the backend:
+Cuando el usuario envía un mensaje de chat, el backend:
 
-1. Loads the user's current portfolio context (cash, positions with P&L, watchlist with live prices, total portfolio value)
-2. Loads recent conversation history from the `chat_messages` table
-3. Constructs a prompt with a system message, portfolio context, conversation history, and the user's new message
-4. Calls the LLM via LiteLLM → OpenRouter, requesting structured output, using the cerebras-inference skill
-5. Parses the complete structured JSON response
-6. Auto-executes any trades or watchlist changes specified in the response
-7. Stores the message and executed actions in `chat_messages`
-8. Returns the complete JSON response to the frontend (no token-by-token streaming — Cerebras inference is fast enough that a loading indicator is sufficient)
+1. Carga el contexto actual de la cartera del usuario (efectivo, posiciones con P&L, watchlist con precios en vivo, valor total de la cartera)
+2. Carga el historial de conversación reciente desde la tabla `chat_messages`
+3. Construye un prompt con un mensaje de sistema, el contexto de la cartera, el historial de conversación y el nuevo mensaje del usuario
+4. Llama al LLM a través de LiteLLM → OpenRouter, solicitando salida estructurada, usando la skill cerebras-inference
+5. Parsea la respuesta JSON estructurada completa
+6. Ejecuta automáticamente cualquier operación o cambio de watchlist especificado en la respuesta
+7. Almacena el mensaje y las acciones ejecutadas en `chat_messages`
+8. Devuelve la respuesta JSON completa al frontend (sin streaming token a token — la inferencia de Cerebras es suficientemente rápida como para que un indicador de carga sea suficiente)
 
-### Structured Output Schema
+### Esquema de Salida Estructurada
 
-The LLM is instructed to respond with JSON matching this schema:
+Se instruye al LLM para que responda con un JSON que coincida con este esquema:
 
 ```json
 {
@@ -314,66 +314,66 @@ The LLM is instructed to respond with JSON matching this schema:
 }
 ```
 
-- `message` (required): The conversational text shown to the user
-- `trades` (optional): Array of trades to auto-execute. Each trade goes through the same validation as manual trades (sufficient cash for buys, sufficient shares for sells)
-- `watchlist_changes` (optional): Array of watchlist modifications
+- `message` (obligatorio): el texto conversacional mostrado al usuario
+- `trades` (opcional): array de operaciones a ejecutar automáticamente. Cada operación pasa por la misma validación que las operaciones manuales (efectivo suficiente para compras, acciones suficientes para ventas)
+- `watchlist_changes` (opcional): array de modificaciones de la watchlist
 
-### Auto-Execution
+### Ejecución Automática
 
-Trades specified by the LLM execute automatically — no confirmation dialog. This is a deliberate design choice:
-- It's a simulated environment with fake money, so the stakes are zero
-- It creates an impressive, fluid demo experience
-- It demonstrates agentic AI capabilities — the core theme of the course
+Las operaciones especificadas por el LLM se ejecutan automáticamente — sin diálogo de confirmación. Esta es una decisión de diseño deliberada:
+- Es un entorno simulado con dinero ficticio, por lo que el riesgo es nulo
+- Crea una experiencia de demostración impresionante y fluida
+- Demuestra capacidades de IA agéntica — el tema central del curso
 
-If a trade fails validation (e.g., insufficient cash), the error is included in the chat response so the LLM can inform the user.
+Si una operación no pasa la validación (por ejemplo, efectivo insuficiente), el error se incluye en la respuesta del chat para que el LLM pueda informar al usuario.
 
-### System Prompt Guidance
+### Orientación del Prompt de Sistema
 
-The LLM should be prompted as "FinAlly, an AI trading assistant" with instructions to:
-- Analyze portfolio composition, risk concentration, and P&L
-- Suggest trades with reasoning
-- Execute trades when the user asks or agrees
-- Manage the watchlist proactively
-- Be concise and data-driven in responses
-- Always respond with valid structured JSON
+Se debe indicar al LLM que actúe como "FinAlly, un asistente de trading con IA", con instrucciones para:
+- Analizar la composición de la cartera, la concentración de riesgo y el P&L
+- Sugerir operaciones con su razonamiento
+- Ejecutar operaciones cuando el usuario lo solicite o esté de acuerdo
+- Gestionar la watchlist de forma proactiva
+- Ser conciso y basarse en datos en sus respuestas
+- Responder siempre con un JSON estructurado válido
 
-### LLM Mock Mode
+### Modo Simulado del LLM
 
-When `LLM_MOCK=true`, the backend returns deterministic mock responses instead of calling OpenRouter. This enables:
-- Fast, free, reproducible E2E tests
-- Development without an API key
-- CI/CD pipelines
-
----
-
-## 10. Frontend Design
-
-### Layout
-
-The frontend is a single-page application with a dense, terminal-inspired layout. The specific component architecture and layout system is up to the Frontend Engineer, but the UI should include these elements:
-
-- **Watchlist panel** — grid/table of watched tickers with: ticker symbol, current price (flashing green/red on change), daily change %, and a sparkline mini-chart (accumulated from SSE since page load)
-- **Main chart area** — larger chart for the currently selected ticker, with at minimum price over time. Clicking a ticker in the watchlist selects it here.
-- **Portfolio heatmap** — treemap visualization where each rectangle is a position, sized by portfolio weight, colored by P&L (green = profit, red = loss)
-- **P&L chart** — line chart showing total portfolio value over time, using data from `portfolio_snapshots`
-- **Positions table** — tabular view of all positions: ticker, quantity, avg cost, current price, unrealized P&L, % change
-- **Trade bar** — simple input area: ticker field, quantity field, buy button, sell button. Market orders, instant fill.
-- **AI chat panel** — docked/collapsible sidebar. Message input, scrolling conversation history, loading indicator while waiting for LLM response. Trade executions and watchlist changes shown inline as confirmations.
-- **Header** — portfolio total value (updating live), connection status indicator, cash balance
-
-### Technical Notes
-
-- Use `EventSource` for SSE connection to `/api/stream/prices`
-- Canvas-based charting library preferred (Lightweight Charts or Recharts) for performance
-- Price flash effect: on receiving a new price, briefly apply a CSS class with background color transition, then remove it
-- All API calls go to the same origin (`/api/*`) — no CORS configuration needed
-- Tailwind CSS for styling with a custom dark theme
+Cuando `LLM_MOCK=true`, el backend devuelve respuestas simuladas deterministas en lugar de llamar a OpenRouter. Esto permite:
+- Tests E2E rápidos, gratuitos y reproducibles
+- Desarrollo sin una clave de API
+- Pipelines de CI/CD
 
 ---
 
-## 11. Docker & Deployment
+## 10. Diseño del Frontend
 
-### Multi-Stage Dockerfile
+### Disposición (Layout)
+
+El frontend es una aplicación de una sola página con una disposición densa, inspirada en una terminal. La arquitectura de componentes específica y el sistema de disposición quedan a criterio del Ingeniero de Frontend, pero la interfaz debe incluir estos elementos:
+
+- **Panel de watchlist** — cuadrícula/tabla de tickers vigilados con: símbolo del ticker, precio actual (destellando en verde/rojo al cambiar), % de cambio diario, y un mini-gráfico tipo sparkline (acumulado desde el SSE desde la carga de la página)
+- **Área principal de gráficos** — gráfico más grande para el ticker actualmente seleccionado, mostrando como mínimo el precio a lo largo del tiempo. Al hacer clic en un ticker de la watchlist se selecciona aquí.
+- **Mapa de calor de la cartera** — visualización treemap donde cada rectángulo es una posición, dimensionado por peso en la cartera y coloreado por P&L (verde = beneficio, rojo = pérdida)
+- **Gráfico de P&L** — gráfico de líneas que muestra el valor total de la cartera a lo largo del tiempo, usando datos de `portfolio_snapshots`
+- **Tabla de posiciones** — vista tabular de todas las posiciones: ticker, cantidad, coste medio, precio actual, P&L no realizado, % de cambio
+- **Barra de operaciones** — área de entrada sencilla: campo de ticker, campo de cantidad, botón de compra, botón de venta. Órdenes de mercado, ejecución instantánea.
+- **Panel de chat de IA** — barra lateral acoplada/colapsable. Entrada de mensajes, historial de conversación con desplazamiento, indicador de carga mientras se espera la respuesta del LLM. Las ejecuciones de operaciones y los cambios de watchlist se muestran en línea como confirmaciones.
+- **Encabezado** — valor total de la cartera (actualizándose en vivo), indicador de estado de conexión, saldo de efectivo
+
+### Notas Técnicas
+
+- Usar `EventSource` para la conexión SSE a `/api/stream/prices`
+- Se prefiere una librería de gráficos basada en canvas (Lightweight Charts o Recharts) por rendimiento
+- Efecto de destello de precio: al recibir un nuevo precio, aplicar brevemente una clase CSS con transición de color de fondo, y luego eliminarla
+- Todas las llamadas a la API van al mismo origen (`/api/*`) — no se necesita configuración de CORS
+- Tailwind CSS para los estilos, con un tema oscuro personalizado
+
+---
+
+## 11. Docker y Despliegue
+
+### Dockerfile Multi-Etapa
 
 ```
 Stage 1: Node 20 slim
@@ -389,68 +389,68 @@ Stage 2: Python 3.12 slim
   - CMD: uvicorn serving FastAPI app
 ```
 
-FastAPI serves the static frontend files and all API routes on port 8000.
+FastAPI sirve los archivos estáticos del frontend y todas las rutas de la API en el puerto 8000.
 
-### Docker Volume
+### Volumen Docker
 
-The SQLite database persists via a named Docker volume:
+La base de datos SQLite persiste mediante un volumen Docker con nombre:
 
 ```bash
 docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
 ```
 
-The `db/` directory in the project root maps to `/app/db` in the container. The backend writes `finally.db` to this path.
+El directorio `db/` en la raíz del proyecto se mapea a `/app/db` en el contenedor. El backend escribe `finally.db` en esta ruta.
 
-### Start/Stop Scripts
+### Scripts de Inicio/Parada
 
 **`scripts/start_mac.sh`** (macOS/Linux):
-- Builds the Docker image if not already built (or if `--build` flag passed)
-- Runs the container with the volume mount, port mapping, and `.env` file
-- Prints the URL to access the app
-- Optionally opens the browser
+- Construye la imagen Docker si aún no está construida (o si se pasa el flag `--build`)
+- Ejecuta el contenedor con el montaje del volumen, el mapeo de puertos y el archivo `.env`
+- Imprime la URL para acceder a la aplicación
+- Opcionalmente abre el navegador
 
 **`scripts/stop_mac.sh`** (macOS/Linux):
-- Stops and removes the running container
-- Does NOT remove the volume (data persists)
+- Detiene y elimina el contenedor en ejecución
+- NO elimina el volumen (los datos persisten)
 
-**`scripts/start_windows.ps1`** / **`scripts/stop_windows.ps1`**: PowerShell equivalents for Windows.
+**`scripts/start_windows.ps1`** / **`scripts/stop_windows.ps1`**: equivalentes en PowerShell para Windows.
 
-All scripts should be idempotent — safe to run multiple times.
+Todos los scripts deben ser idempotentes — seguros de ejecutar varias veces.
 
-### Optional Cloud Deployment
+### Despliegue en la Nube (Opcional)
 
-The container is designed to deploy to AWS App Runner, Render, or any container platform. A Terraform configuration for App Runner may be provided in a `deploy/` directory as a stretch goal, but is not part of the core build.
+El contenedor está diseñado para desplegarse en AWS App Runner, Render o cualquier plataforma de contenedores. Como objetivo adicional (stretch goal) podría proporcionarse una configuración de Terraform para App Runner en un directorio `deploy/`, pero no forma parte de la construcción principal.
 
 ---
 
-## 12. Testing Strategy
+## 12. Estrategia de Pruebas
 
-### Unit Tests (within `frontend/` and `backend/`)
+### Tests Unitarios (dentro de `frontend/` y `backend/`)
 
 **Backend (pytest)**:
-- Market data: simulator generates valid prices, GBM math is correct, Massive API response parsing works, both implementations conform to the abstract interface
-- Portfolio: trade execution logic, P&L calculations, edge cases (selling more than owned, buying with insufficient cash, selling at a loss)
-- LLM: structured output parsing handles all valid schemas, graceful handling of malformed responses, trade validation within chat flow
-- API routes: correct status codes, response shapes, error handling
+- Datos de mercado: el simulador genera precios válidos, la matemática del GBM es correcta, el parseo de la respuesta de la API de Massive funciona, ambas implementaciones cumplen con la interfaz abstracta
+- Cartera: lógica de ejecución de operaciones, cálculos de P&L, casos límite (vender más de lo que se posee, comprar con efectivo insuficiente, vender con pérdidas)
+- LLM: el parseo de la salida estructurada maneja todos los esquemas válidos, manejo correcto de respuestas malformadas, validación de operaciones dentro del flujo de chat
+- Rutas de la API: códigos de estado correctos, formas de respuesta, manejo de errores
 
-**Frontend (React Testing Library or similar)**:
-- Component rendering with mock data
-- Price flash animation triggers correctly on price changes
-- Watchlist CRUD operations
-- Portfolio display calculations
-- Chat message rendering and loading state
+**Frontend (React Testing Library o similar)**:
+- Renderizado de componentes con datos simulados
+- La animación de destello de precio se activa correctamente ante cambios de precio
+- Operaciones CRUD de la watchlist
+- Cálculos de visualización de la cartera
+- Renderizado de mensajes de chat y estado de carga
 
-### E2E Tests (in `test/`)
+### Tests E2E (en `test/`)
 
-**Infrastructure**: A separate `docker-compose.test.yml` in `test/` that spins up the app container plus a Playwright container. This keeps browser dependencies out of the production image.
+**Infraestructura**: un `docker-compose.test.yml` independiente en `test/` que levanta el contenedor de la aplicación junto con un contenedor de Playwright. Esto mantiene las dependencias del navegador fuera de la imagen de producción.
 
-**Environment**: Tests run with `LLM_MOCK=true` by default for speed and determinism.
+**Entorno**: los tests se ejecutan con `LLM_MOCK=true` por defecto, para mayor velocidad y determinismo.
 
-**Key Scenarios**:
-- Fresh start: default watchlist appears, $10k balance shown, prices are streaming
-- Add and remove a ticker from the watchlist
-- Buy shares: cash decreases, position appears, portfolio updates
-- Sell shares: cash increases, position updates or disappears
-- Portfolio visualization: heatmap renders with correct colors, P&L chart has data points
-- AI chat (mocked): send a message, receive a response, trade execution appears inline
-- SSE resilience: disconnect and verify reconnection
+**Escenarios Clave**:
+- Inicio limpio: aparece la watchlist predeterminada, se muestra el saldo de $10k, los precios se están transmitiendo
+- Añadir y eliminar un ticker de la watchlist
+- Comprar acciones: el efectivo disminuye, aparece la posición, la cartera se actualiza
+- Vender acciones: el efectivo aumenta, la posición se actualiza o desaparece
+- Visualización de la cartera: el mapa de calor se renderiza con los colores correctos, el gráfico de P&L tiene puntos de datos
+- Chat de IA (simulado): enviar un mensaje, recibir una respuesta, la ejecución de la operación aparece en línea
+- Resiliencia del SSE: desconectar y verificar la reconexión
