@@ -1,43 +1,44 @@
+--- 
+nombre: cerebras-inference
+descripción: Utilice esta función para escribir código que llame a un LLM usando LiteLLM y OpenRouter con el proveedor de inferencia Cerebras.
 ---
-name: cerebras-inference
-description: Use this to write code to call an LLM using LiteLLM and OpenRouter with the Cerebras inference provider
----
 
-# Calling an LLM via Cerebras
+# Llamada a un LLM a través de Cerebras
 
-These instructions allow you write code to call an LLM with Cerebras specified as the inference provider.  
-This method uses LiteLLM and OpenRouter.
+Estas instrucciones le permiten escribir código para llamar a un LLM con Cerebras como proveedor de inferencia.
 
-## Setup
+Este método utiliza LiteLLM y OpenRouter.
 
-The OPENROUTER_API_KEY must be set in the .env file and loaded in as an environment variable.  
+## Configuración
 
-The uv project must include litellm and pydantic.
+La clave API de OpenRouter (OPENROUTER_API_KEY) debe estar configurada en el archivo .env y cargada como variable de entorno.
+
+El proyecto uv debe incluir litellm y pydantic.
+
 `uv add litellm pydantic`
 
-## Code snippets
+## Fragmentos de código
 
-Use code like these examples in order to use Cerebras.
+Utiliza el código como estos ejemplos para usar Cerebras.
 
-### Imports and constants
+### Importaciones y constantes
 
 ```python
 from litellm import completion
 MODEL = "openrouter/openai/gpt-oss-120b"
 EXTRA_BODY = {"provider": {"order": ["cerebras"]}}
 ```
-
-### Code to call via Cerebras for a text response
+### Código para llamar a través de Cerebras para una respuesta de texto
 
 ```python
 response = completion(model=MODEL, messages=messages, reasoning_effort="low", extra_body=EXTRA_BODY)
 result = response.choices[0].message.content
 ```
 
-### Code to call via Cerebras for a Structured Outputs response
+### Código para llamar a través de Cerebras para una respuesta de salida estructurada
 
 ```python
 response = completion(model=MODEL, messages=messages, response_format=MyBaseModelSubclass, reasoning_effort="low", extra_body=EXTRA_BODY)
-result = response.choices[0].message.content
-result_as_object = MyBaseModelSubclass.model_validate_json(result)
+result = respuesta.opciones[0].mensaje.contenido
+resultado_como_objeto = MyBaseModelSubclass.model_validate_json(resultado)
 ```
