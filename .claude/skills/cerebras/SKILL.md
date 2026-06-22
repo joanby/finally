@@ -1,6 +1,6 @@
 --- 
-nombre: cerebras-inference
-descripción: Utilice esta función para escribir código que llame a un LLM usando LiteLLM y OpenRouter con el proveedor de inferencia Cerebras.
+name: cerebras-inference
+description: Utilice esta función para escribir código que llame a un LLM usando LiteLLM y OpenRouter con el proveedor de inferencia Cerebras.
 ---
 
 # Llamada a un LLM a través de Cerebras
@@ -39,6 +39,6 @@ result = response.choices[0].message.content
 
 ```python
 response = completion(model=MODEL, messages=messages, response_format=MyBaseModelSubclass, reasoning_effort="low", extra_body=EXTRA_BODY)
-result = respuesta.opciones[0].mensaje.contenido
-resultado_como_objeto = MyBaseModelSubclass.model_validate_json(resultado)
+result = response.choices[0].message.content
+result_as_object = MyBaseModelSubclass.model_validate_json(result)
 ```

@@ -36,12 +36,14 @@ El usuario ejecuta un único comando Docker (o un script de inicio proporcionado
 - **Animaciones de destello de precio**: breve resalte de fondo verde/rojo al cambiar el precio, desapareciendo en ~500ms mediante transiciones CSS
 - **Indicador de estado de conexión**: un pequeño punto de color (verde = conectado, amarillo = reconectando, rojo = desconectado) visible en el encabezado
 - **Diseño profesional y denso en datos**: inspirado en terminales Bloomberg/de trading — cada píxel cumple una función
-- **Adaptable pero pensado primero para escritorio**: optimizado para pantallas anchas, funcional en tablet
+- **Pensado primero para escritorio**: optimizado para pantallas anchas; no es objetivo dar soporte a tablet/móvil en esta fase
 
 ### Esquema de Colores
 - Amarillo de Acento: `#ecad0a`
 - Azul Primario: `#209dd7`
 - Púrpura Secundario: `#753991` (botones de envío)
+- Verde (subida de precio / beneficio): `#16c784`
+- Rojo (bajada de precio / pérdida): `#ea3943`
 
 ## 3. Visión General de la Arquitectura
 
@@ -98,10 +100,9 @@ finally/
 │   ├── start_windows.ps1     # Inicia el contenedor Docker (Windows PowerShell)
 │   └── stop_windows.ps1      # Detiene el contenedor Docker (Windows PowerShell)
 ├── test/                     # Tests E2E con Playwright + docker-compose.test.yml
-├── db/                       # Punto de montaje del volumen (el archivo SQLite vive aquí en tiempo de ejecución)
+├── db/                       # Bind mount del volumen (el archivo SQLite vive aquí en tiempo de ejecución)
 │   └── .gitkeep              # El directorio existe en el repo; finally.db está en .gitignore
 ├── Dockerfile                # Build multi-etapa (Node → Python)
-├── docker-compose.yml        # Wrapper opcional de conveniencia
 ├── .env                      # Variables de entorno (en .gitignore, se versiona .env.example)
 └── .gitignore
 ```
@@ -121,7 +122,7 @@ finally/
 ## 5. Variables de Entorno
 
 ```bash
-# Obligatoria: clave de API de OpenRouter para la funcionalidad de chat con LLM
+# Obligatoria salvo que LLM_MOCK=true: clave de API de OpenRouter para la funcionalidad de chat con LLM
 OPENROUTER_API_KEY=your-openrouter-api-key-here
 
 # Opcional: clave de API de Massive (Polygon.io) para datos de mercado reales
@@ -136,7 +137,8 @@ LLM_MOCK=false
 
 - Si `MASSIVE_API_KEY` está establecida y no está vacía → el backend usa la API REST de Massive para los datos de mercado
 - Si `MASSIVE_API_KEY` está ausente o vacía → el backend usa el simulador de mercado integrado
-- Si `LLM_MOCK=true` → el backend devuelve respuestas de LLM simuladas y deterministas (para tests E2E)
+- Si `LLM_MOCK=true` → el backend devuelve respuestas de LLM simuladas y deterministas (para tests E2E), y no requiere `OPENROUTER_API_KEY`
+- Si `LLM_MOCK=false` (o no está definida) → `OPENROUTER_API_KEY` es obligatoria para que el chat funcione
 - El backend lee el `.env` desde la raíz del proyecto (montado en el contenedor o leído mediante `--env-file` de docker)
 
 ---
@@ -154,6 +156,7 @@ Tanto el simulador como el cliente de Massive implementan la misma interfaz abst
 - Movimientos correlacionados entre tickers (por ejemplo, las acciones tecnológicas se mueven juntas)
 - "Eventos" aleatorios ocasionales — movimientos súbitos del 2-5% en un ticker para dar dramatismo
 - Comienza desde precios semilla realistas (por ejemplo, AAPL ~$190, GOOGL ~$175, etc.)
+- Cuando se añade un ticker nuevo (no predefinido) a la watchlist, el simulador le asigna también un precio semilla realista (generado de forma plausible) y empieza a simularlo igual que a los demás
 - Se ejecuta como una tarea en segundo plano dentro del propio proceso — sin dependencias externas
 
 ### API de Massive (Opcional)
@@ -175,7 +178,7 @@ Tanto el simulador como el cliente de Massive implementan la misma interfaz abst
 
 - Endpoint: `GET /api/stream/prices`
 - Conexión SSE de larga duración; el cliente usa la API nativa `EventSource`
-- El servidor envía actualizaciones de precio para todos los tickers conocidos por el sistema a un ritmo regular (~500ms) — en el modelo de usuario único esto equivale a la watchlist del usuario
+- El servidor envía actualizaciones de precio a un ritmo regular (~500ms) para la **unión** de los tickers de la watchlist del usuario y los tickers con una posición abierta (aunque ya no estén en la watchlist) — así el P&L no realizado y el mapa de calor siempre tienen precios actualizados
 - Cada evento SSE contiene ticker, precio, precio anterior, marca de tiempo y dirección del cambio
 - El cliente gestiona la reconexión automáticamente (EventSource tiene reintento incorporado)
 
@@ -290,7 +293,7 @@ Existe una OPENROUTER_API_KEY en el archivo .env en la raíz del proyecto.
 Cuando el usuario envía un mensaje de chat, el backend:
 
 1. Carga el contexto actual de la cartera del usuario (efectivo, posiciones con P&L, watchlist con precios en vivo, valor total de la cartera)
-2. Carga el historial de conversación reciente desde la tabla `chat_messages`
+2. Carga el historial de conversación reciente desde la tabla `chat_messages` (máximo los últimos 20 mensajes)
 3. Construye un prompt con un mensaje de sistema, el contexto de la cartera, el historial de conversación y el nuevo mensaje del usuario
 4. Llama al LLM a través de LiteLLM → OpenRouter, solicitando salida estructurada, usando la skill cerebras-inference
 5. Parsea la respuesta JSON estructurada completa
@@ -309,14 +312,15 @@ Se instruye al LLM para que responda con un JSON que coincida con este esquema:
     {"ticker": "AAPL", "side": "buy", "quantity": 10}
   ],
   "watchlist_changes": [
-    {"ticker": "PYPL", "action": "add"}
+    {"ticker": "PYPL", "action": "add"},
+    {"ticker": "NFLX", "action": "remove"}
   ]
 }
 ```
 
 - `message` (obligatorio): el texto conversacional mostrado al usuario
 - `trades` (opcional): array de operaciones a ejecutar automáticamente. Cada operación pasa por la misma validación que las operaciones manuales (efectivo suficiente para compras, acciones suficientes para ventas)
-- `watchlist_changes` (opcional): array de modificaciones de la watchlist
+- `watchlist_changes` (opcional): array de modificaciones de la watchlist. `action` admite `"add"` o `"remove"`
 
 ### Ejecución Automática
 
@@ -393,13 +397,13 @@ FastAPI sirve los archivos estáticos del frontend y todas las rutas de la API e
 
 ### Volumen Docker
 
-La base de datos SQLite persiste mediante un volumen Docker con nombre:
+La base de datos SQLite persiste mediante un bind mount del directorio `db/` de la raíz del proyecto:
 
 ```bash
-docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
+docker run -v $(pwd)/db:/app/db -p 8000:8000 --env-file .env finally
 ```
 
-El directorio `db/` en la raíz del proyecto se mapea a `/app/db` en el contenedor. El backend escribe `finally.db` en esta ruta.
+El directorio `db/` en la raíz del proyecto se mapea a `/app/db` en el contenedor. El backend escribe `finally.db` en esta ruta, por lo que el archivo es directamente inspeccionable/respaldable desde el host.
 
 ### Scripts de Inicio/Parada
 
