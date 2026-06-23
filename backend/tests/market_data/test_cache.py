@@ -63,3 +63,25 @@ async def test_full_subscriber_queue_is_dropped_without_blocking(cache: PriceCac
     await cache.update(PriceTick.create("AAPL", 191.0, 190.0))
 
     assert cache.get("AAPL").price == 191.0
+
+
+async def test_multiple_subscribers_all_receive_the_same_tick(cache: PriceCache):
+    queues = [cache.subscribe() for _ in range(3)]
+    tick = PriceTick.create("AAPL", 191.0, 190.0)
+
+    await cache.update(tick)
+
+    for queue in queues:
+        received = await asyncio.wait_for(queue.get(), timeout=1)
+        assert received.ticker == "AAPL"
+        assert received.price == 191.0
+
+
+async def test_unsubscribing_one_does_not_affect_others(cache: PriceCache):
+    keep, drop = cache.subscribe(), cache.subscribe()
+    cache.unsubscribe(drop)
+
+    await cache.update(PriceTick.create("AAPL", 191.0, 190.0))
+
+    assert not keep.empty()
+    assert drop.empty()

@@ -45,3 +45,13 @@ def test_deterministic_given_same_seed():
     shocks_a = correlated_shocks(random.Random(99), sectors)
     shocks_b = correlated_shocks(random.Random(99), sectors)
     assert shocks_a == shocks_b
+
+
+def test_handles_a_brand_new_sector_not_seen_before():
+    rng = random.Random(5)
+    sectors = {"AAPL": "tech", "PYPL": "fintech-startup"}
+
+    shocks = correlated_shocks(rng, sectors)
+
+    assert set(shocks.keys()) == {"AAPL", "PYPL"}
+    assert all(isinstance(z, float) for z in shocks.values())

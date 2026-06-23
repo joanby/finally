@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-06-23  
 **Revisor:** Claude Sonnet 4.6  
-**Resultado de tests:** 43/43 ✅ (tras corrección de 1 bug)
+**Resultado de tests:** 47/47 ✅ (tras corrección de 1 bug + cierre de 3 gaps de cobertura + alineación de precios semilla con el diseño)
 
 ---
 
@@ -85,7 +85,7 @@ Cada `CachedPrice` del snapshot es ahora una instancia independiente. El test `t
 - `EVENT_PROBABILITY = 0.0008` se traduce a ~1 evento cada ~20 min a 500ms/tick — consistente con la especificación.
 - Los parámetros genéricos para tickers no pre-configurados (`GENERIC_TICKER_DRIFT`, `GENERIC_TICKER_VOLATILITY = 0.30`, `GENERIC_TICKER_SECTOR = "general"`) son valores razonables de fallback.
 
-**Discrepancia menor con el diseño:** `market_simulator.md` especificaba precios semilla ligeramente diferentes para algunos tickers (META=$580, JPM=$215, V=$310, NVDA=$135), mientras que `simulator_config.py` usa META=$500, JPM=$200, V=$280, NVDA=$130. La divergencia es cosmética — son aproximaciones de precios de referencia, no valores de precisión requerida.
+**Discrepancia menor con el diseño — corregida:** `market_simulator.md` especificaba precios semilla ligeramente diferentes para algunos tickers (META=$580, JPM=$215, V=$310, NVDA=$135), mientras que `simulator_config.py` usaba META=$500, JPM=$200, V=$280, NVDA=$130. Se alinearon los cuatro valores con el documento de diseño. Ningún test dependía de los valores anteriores, por lo que el cambio no rompió la suite.
 
 ### `correlation.py` — Shocks correlacionados
 
@@ -130,14 +130,14 @@ Cada `CachedPrice` del snapshot es ahora una instancia independiente. El test `t
 |---|---|---|
 | `types.py` | 4 | Cubre los 3 directions, redondeo, timestamp UTC, forma SSE |
 | `base.py` | 3 | ABC no instanciable, callback emit, propiedad tickers |
-| `cache.py` | 6 | CRUD, snapshot aislado, sub/unsub, drop de cola llena |
-| `correlation.py` | 4 | Cobertura, normalidad estadística, correlación sectorial, determinismo |
-| `simulator.py` | 11 | Interfaz, tickers default, emisión, movimiento, add/remove, seed, loop |
+| `cache.py` | 8 | CRUD, snapshot aislado, sub/unsub, drop de cola llena, fan-out a múltiples suscriptores |
+| `correlation.py` | 5 | Cobertura, normalidad estadística, correlación sectorial, determinismo, sector nuevo |
+| `simulator.py` | 12 | Interfaz, tickers default, emisión, movimiento, add/remove, re-add genérico, seed, loop |
 | `massive_client.py` | 10 | Interfaz, add/remove, request URL, parseo, fallbacks, errores, loop, cleanup |
 | `factory.py` | 3 | Sin clave, clave en blanco, clave presente |
 | `wiring.py` | 1 | Escritura al cache compartido |
 
-**Total: 43 tests** — cobertura completa del happy path y de los casos de error más importantes.
+**Total: 47 tests** — cobertura completa del happy path, los casos de error más importantes, y los gaps previamente identificados.
 
 ### Puntos fuertes de la suite
 
@@ -146,11 +146,13 @@ Cada `CachedPrice` del snapshot es ahora una instancia independiente. El test `t
 3. **Tests estadísticos en correlation:** `test_shocks_are_roughly_standard_normal` y `test_same_sector_tickers_move_more_alike_than_different_sectors` validan propiedades matemáticas reales, no solo que "no falla".
 4. **Test de comportamiento de lifecycle:** `test_start_and_stop_runs_background_loop` y `test_run_loop_swallows_http_errors_and_keeps_polling` validan comportamiento asíncrono real.
 
-### Gaps de cobertura (no bloqueantes)
+### Gaps de cobertura — cerrados
 
-- **`correlated_shocks` con sector no visto:** si `sectors_by_ticker` contiene un sector completamente nuevo, el comportamiento es correcto (añade una entrada a `z_sector`), pero no hay test explícito para ello.
-- **`PriceCache` con múltiples suscriptores simultáneos:** hay test para un suscriptor, pero no para fan-out a N suscriptores. La lógica es simple (iteración de set), riesgo bajo.
-- **`MarketSimulator.add_ticker` cuando el ticker ya existe y está en `_prices` pero no en `_tickers`:** camino parcialmente cubierto por `test_add_known_ticker_uses_its_seed_price` (remove+add), pero no el caso de un ticker que fue añadido como genérico y luego re-añadido. Riesgo muy bajo.
+Los tres gaps identificados en la primera pasada de revisión ya están cubiertos:
+
+- **`correlated_shocks` con sector no visto** → `test_handles_a_brand_new_sector_not_seen_before` en `test_correlation.py`.
+- **`PriceCache` con múltiples suscriptores simultáneos** → `test_multiple_subscribers_all_receive_the_same_tick` y `test_unsubscribing_one_does_not_affect_others` en `test_cache.py`.
+- **`MarketSimulator.add_ticker` re-añadiendo un ticker genérico ya visto** → `test_readding_a_previously_seen_generic_ticker_preserves_its_price` en `test_simulator.py`, que confirma que el precio se conserva (no se regenera) al re-añadir.
 
 ---
 
@@ -175,4 +177,4 @@ Cada `CachedPrice` del snapshot es ahora una instancia independiente. El test `t
 
 ## Conclusión
 
-La implementación es sólida, bien estructurada y fiel a la especificación. El único bug real era el shallow copy en `snapshot()`, ya corregido. La suite de 43 tests tiene una cobertura excelente para un módulo de esta complejidad, con especial mérito en los tests estadísticos de correlación y los tests de lifecycle asíncrono. El módulo está listo para integrarse con el resto del backend (rutas SSE, watchlist, portfolio).
+La implementación es sólida, bien estructurada y fiel a la especificación. El bug real (shallow copy en `snapshot()`) está corregido, los precios semilla están alineados con `market_simulator.md`, y los tres gaps de cobertura identificados se cerraron con nuevos tests. La suite de 47 tests pasa en su totalidad. El módulo está listo para integrarse con el resto del backend (rutas SSE, watchlist, portfolio).

@@ -73,6 +73,19 @@ async def test_unknown_ticker_participates_in_ticks():
     assert any(t.ticker == "PYPL" for t in received)
 
 
+def test_readding_a_previously_seen_generic_ticker_preserves_its_price():
+    sim, _ = make_simulator()
+    sim.add_ticker("PYPL")
+    price_after_first_add = sim.current_price("PYPL")
+
+    sim.remove_ticker("PYPL")
+    assert "PYPL" not in sim.tickers
+
+    sim.add_ticker("PYPL")
+    assert "PYPL" in sim.tickers
+    assert sim.current_price("PYPL") == price_after_first_add
+
+
 def test_remove_ticker_excludes_it_from_future_ticks():
     sim, _ = make_simulator()
     sim.remove_ticker("AAPL")
