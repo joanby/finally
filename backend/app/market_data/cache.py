@@ -40,7 +40,7 @@ class PriceCache:
                 self._subscribers.discard(q)
 
     def snapshot(self) -> dict[str, CachedPrice]:
-        return dict(self._latest)
+        return {k: CachedPrice(v.price, v.prev_price, v.timestamp) for k, v in self._latest.items()}
 
     def get(self, ticker: str) -> CachedPrice | None:
         return self._latest.get(ticker)
