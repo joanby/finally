@@ -15,10 +15,10 @@ DEFAULT_TICKERS: dict[str, TickerConfig] = {
     "MSFT": TickerConfig(420.00, 0.10, 0.26, "tech"),
     "AMZN": TickerConfig(185.00, 0.11, 0.32, "tech"),
     "TSLA": TickerConfig(250.00, 0.05, 0.55, "auto"),
-    "NVDA": TickerConfig(130.00, 0.18, 0.50, "tech"),
-    "META": TickerConfig(500.00, 0.10, 0.34, "tech"),
-    "JPM": TickerConfig(200.00, 0.07, 0.22, "finance"),
-    "V": TickerConfig(280.00, 0.08, 0.20, "finance"),
+    "NVDA": TickerConfig(135.00, 0.18, 0.50, "tech"),
+    "META": TickerConfig(580.00, 0.10, 0.34, "tech"),
+    "JPM": TickerConfig(215.00, 0.07, 0.22, "finance"),
+    "V": TickerConfig(310.00, 0.08, 0.20, "finance"),
     "NFLX": TickerConfig(700.00, 0.09, 0.33, "media"),
 }
 
