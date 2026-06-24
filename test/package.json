@@ -1,0 +1,11 @@
+{
+  "name": "finally-e2e",
+  "private": true,
+  "description": "FinAlly E2E tests (Playwright) — PLAN.md §12 scenarios against the running container with LLM_MOCK=true.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

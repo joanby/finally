@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply bg-bg text-[#e6e6f0] font-sans antialiased;
+  }
+  body {
+    overflow: hidden; /* terminal de pantalla completa, sin scroll de página */
+  }
+  /* Dígitos que no bailan al actualizarse en vivo: la firma del terminal. */
+  .tnum {
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply bg-panel border border-border rounded-md;
+  }
+  .panel-head {
+    @apply px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-muted border-b border-border flex items-center justify-between;
+  }
+  .scroll-y {
+    @apply overflow-y-auto;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a4d transparent;
+  }
+  .scroll-y::-webkit-scrollbar {
+    width: 8px;
+  }
+  .scroll-y::-webkit-scrollbar-thumb {
+    background: #3a3a4d;
+    border-radius: 4px;
+  }
+}
+
+/* Destello de precio: fondo verde/rojo que se desvanece en ~500ms. */
+.flash-up {
+  animation: flashUp 0.5s ease-out;
+}
+.flash-down {
+  animation: flashDown 0.5s ease-out;
+}
+@keyframes flashUp {
+  0% {
+    background-color: rgba(22, 199, 132, 0.45);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+@keyframes flashDown {
+  0% {
+    background-color: rgba(234, 57, 67, 0.45);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-up,
+  .flash-down,
+  .animate-pulse-dot {
+    animation: none !important;
+  }
+}

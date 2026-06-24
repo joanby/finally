@@ -1,0 +1,32 @@
+# Infraestructura E2E: app FinAlly (LLM mock) + runner de Playwright.
+# Integración escribe los tests en ./ y los ejecuta dentro del servicio playwright.
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      LLM_MOCK: "true"
+      MASSIVE_API_KEY: ""
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/api/health').status==200 else sys.exit(1)"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.49.0-noble
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      BASE_URL: "http://app:8000"
+    working_dir: /tests
+    volumes:
+      - ./:/tests
+    # Comando por defecto: lanza los E2E que provea Integración.
+    # Sobre-escribible: docker compose -f docker-compose.test.yml run playwright <cmd>
+    command: ["npx", "--yes", "playwright", "test"]
