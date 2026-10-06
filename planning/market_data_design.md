@@ -1,6 +1,8 @@
 # Diseño del Backend de Datos de Mercado
 
 > Documento de diseño técnico para la implementación del componente de datos de mercado descrito en `PLAN.md` (Sección 6). Dirigido al agente de Backend/Datos de Mercado. Incluye fragmentos de código en Python (FastAPI, async) listos para adaptar.
+>
+> **Aviso (2026-08-14): documento histórico, no fuente de verdad.** El componente ya está implementado en `backend/app/market_data/` y ha evolucionado más allá de los fragmentos de código de este documento — por ejemplo, `PriceTick`/`CachedPrice` ahora incluyen `session_open`, `MarketDataProvider` expone `get_last_price()`, `MarketSimulator.add_ticker()` emite un tick inmediato, y `PriceCache.snapshot()` hace copia profunda de cada `CachedPrice` (no `dict(self._latest)`) — ver `PLAN.md` §6 para el contrato vigente. Ante cualquier discrepancia entre este documento y `PLAN.md` o el código real bajo `backend/app/market_data/`, esos dos priman. Este documento se conserva como contexto de diseño original, no como referencia a mantener sincronizada línea a línea.
 
 ## 1. Objetivos y Restricciones
 
@@ -367,7 +369,7 @@ class MarketSimulator(MarketDataProvider):
 import os
 
 MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "")
-MASSIVE_BASE_URL = "https://api.massive.io/v2"  # placeholder; usar el endpoint real de Massive/Polygon
+MASSIVE_BASE_URL = "https://api.massive.com"  # confirmado en planning/massive_api.md; rutas bajo /v2/...
 MASSIVE_POLL_INTERVAL_SECONDS = float(os.environ.get("MASSIVE_POLL_INTERVAL_SECONDS", "15"))
 ```
 
@@ -502,8 +504,10 @@ async def lifespan(app: FastAPI):
     provider = build_market_data_provider(on_tick)
     app.state.market_data_provider = provider
 
-    # sembrar tickers iniciales desde la watchlist persistida
-    for ticker in load_watchlist_tickers():
+    # sembrar tickers iniciales: unión de watchlist + tickers con posición abierta
+    # (una posición sin ticker en watchlist debe seguir recibiendo precios tras un reinicio)
+    seed_tickers = set(load_watchlist_tickers()) | set(load_position_tickers())
+    for ticker in seed_tickers:
         provider.add_ticker(ticker)
 
     await provider.start()
